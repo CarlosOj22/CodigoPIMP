@@ -135,9 +135,9 @@ void loop() {
   Serial.println(WiFi.localIP());
 
   display.clearDisplay();
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(0, 10);
+  display.setCursor(10, 10);
  
  //INTENTAMOS CONECTARNOS A EL PUNTO ACCESO
   while (!client.connected()) {
@@ -179,7 +179,5 @@ void loop() {
     Serial.println("WiFi desconectado, intentando reconectar...");
     wifiMulti.run();
   } 
-  //USAMOS PAUSE NO DELAY!!!!!!
-  //CON DELAY TENIAMOS QUE PULSAR TODO EL RATO HASTA COINCIDER QUE LA MAQUINA NO STVUERA DORMIDA EN EL DELAY Y EL MENSAJE LLEGABA!
   pausa(30000);
 }
