@@ -131,19 +131,16 @@ void loop() {
   Serial.println(WiFi.localIP());
   sprintf(str, "%2.2f", t);
 
-  /*EN EL LOOP NOS ESTAMOS CONECTANDO A MQTT TODO EL RATO, QUIZA ESTO HABRIA QUE QUITARLO SI 
-  NOS CONECTAMOS YA ANTES EN EL SETUP; pero...FUNCIONA ASI :8*/
+  //REVISAMOS SI ESTAMOS CONECTADOS, SI LO ESTAMOS NOS SUBSCRIBIMOS
   while (!client.connected()) {
-    Serial.println("Conectando a mqtt...");
     if (client.connect("ESP32Client", mqttUser, mqttPassword)) {
-      Serial.println("Conectado");
       //SUSCRIBIMOS A TOPIC
       client.subscribe("losfontaneros/estadoRadiador");
       client.subscribe("losfontaneros/temperaturaConfort");
       Serial.println("Suscripción a 'losfontaneros/estadoRadiador' exitosa.");
       client.setCallback(callback);
     } else {
-      Serial.print("ERROR");
+      Serial.print("ERROR DE CONEXION");
       Serial.print(client.state());
       delay(2000);
     }
