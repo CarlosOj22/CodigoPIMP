@@ -137,7 +137,7 @@ void loop() {
   display.clearDisplay();
   display.setTextSize(2);
   display.setTextColor(WHITE);
-  display.setCursor(10, 10);
+  display.setCursor(0, 30);
  
  //INTENTAMOS CONECTARNOS A EL PUNTO ACCESO
   while (!client.connected()) {
@@ -170,7 +170,7 @@ void loop() {
   } else {
     Serial.println("Caldera apagada.");
     client.publish("losfontaneros/estadoCaldera", "OFF");
-     // Display static text
+     //IMPRIMIMOS MENSAJE
     display.println("Caldera apagada");
     display.display();  
   }
