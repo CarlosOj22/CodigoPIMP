@@ -23,8 +23,7 @@ const int SCREEN_HEIGHT = 64; // OLED display height, in pixels
 //Declaracion para que funcione pantalle led, se le pasa como parametros el ancho y alto
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-display.setcursor(10,0);
-int pinCalderaEnvio = 5; //Envia señal a la caldera 
+int pinCalderaEnvio = 4; //Envia señal a la caldera 
 int pinCalderaRecibe = 2;//Este recibe estado caldera
 
 //Valores para conexion MQTT
@@ -95,7 +94,7 @@ void setup() {
   //Eseramos que se conecte
   while (wifiMulti.run() != WL_CONNECTED) {
     Serial.println("Esperando conexion WiFis");
-    delay(1000);
+    pausa(1000);
   }
 
   //DAMO LOS DATOS DE LA CONEXION
@@ -135,9 +134,9 @@ void loop() {
   Serial.println(WiFi.localIP());
 
   display.clearDisplay();
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(WHITE);
-  display.setCursor(0, 30);
+  display.setCursor(0, 0);
  
  //INTENTAMOS CONECTARNOS A EL PUNTO ACCESO
   while (!client.connected()) {
@@ -158,21 +157,32 @@ void loop() {
   //ENVIAMOS UN HIGH A CALDERA
   digitalWrite(pinCalderaEnvio, HIGH);
 
-  //SI VVUELVE COMO HIGH, CIRCUITO CERRADO, CALDERA ENCENDIDA
+  //SI VUELVE COMO HIGH, CIRCUITO CERRADO, CALDERA ENCENDIDA
   if (digitalRead(pinCalderaRecibe) == HIGH) {
     Serial.println("Caldera encendida.");
     client.publish("losfontaneros/estadoCaldera", "ON");
     // Display static text
+    display.println("LOS FONTANEROS");
+    display.setCursor(0, 30);
     display.println("Caldera encendida");
     display.display();
-  
+    pausa(2000);
+    display.startscrollright(1,4);
+    pausa(3000);
+    //display.stopscroll();
   //SI NO, CALDERA APAGADA
   } else {
     Serial.println("Caldera apagada.");
     client.publish("losfontaneros/estadoCaldera", "OFF");
      //IMPRIMIMOS MENSAJE
+    display.println("LOS FONTANEROS");
+    display.setCursor(0, 30);
     display.println("Caldera apagada");
     display.display();  
+    pausa(2000);
+    display.startscrollright(1,4);
+    pausa(3000);
+    //display.stopscroll();
   }
 
   if (WiFi.status() != WL_CONNECTED) {
