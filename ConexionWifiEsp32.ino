@@ -13,7 +13,7 @@
 //VARIABLES
 int DHTPIN = 17;
 int pinrel = 25;
-int TEMPERATURA_LIMITE = 24;
+int TEMPERATURA_LIMITE = 18;
 int ledR = 26;
 int ledV = 27;
 float t;
@@ -88,7 +88,7 @@ void setup() {
   WiFi.disconnect(true);
   WiFi.mode(WIFI_STA);
   //CLAVES PUNTO ACCESO 
-  wifiMulti.addAP("losfontanerosiot", "Yungbeef@123");
+  wifiMulti.addAP("CIFPzonaIoT", "cifp16010042");
 
   //INICIAMOS WIFIMULTI
   wifiMulti.run();
@@ -112,9 +112,9 @@ void setup() {
     Serial.println("Conectando a mqtt...");
     if (client.connect("ESP32Client", mqttUser, mqttPassword)) {
       Serial.println("Conectado");
-      client.subscribe("losfontaneros/estadoRadiador");
-      client.subscribe("losfontaneros/temperaturaConfort");
-      Serial.println("Suscripción a 'losfontaneros/estadoRadiador' exitosa.");
+      client.subscribe("CIFP/A27/estadoRadiador");
+      client.subscribe("CIFP/A27/temperaturaAula");
+      Serial.println("Suscripción a 'CIFP/A27/estadoRadiador' exitosa.");
 
     } else {
       Serial.print("ERROR");
@@ -158,9 +158,9 @@ void loop() {
   while (!client.connected()) {
     if (client.connect("ESP32Client", mqttUser, mqttPassword)) {
       //SUSCRIBIMOS A TOPIC
-      client.subscribe("losfontaneros/estadoRadiador");
-      client.subscribe("losfontaneros/temperaturaConfort");
-      Serial.println("Suscripción a 'losfontaneros/estadoRadiador' exitosa.");
+      client.subscribe("CIFP/A27/estadoRadiador");
+      client.subscribe("CIFP/A27/temperaturaAula");
+      Serial.println("Suscripción a 'CIFP/A27/estadoRadiador' exitosa.");
       client.setCallback(callback);
     } else {
       Serial.print("ERROR DE CONEXION");
@@ -169,11 +169,12 @@ void loop() {
     }
   }
 
+  //HEMOS CAMBIADO LA LOGICA DEL RELE; YA QUE ERA INVERSA
   //COMPROBAMOS TEMPERATURA PARA ENCENDER O APAGAR RUIDO
   if (t > TEMPERATURA_LIMITE) {
-    digitalWrite(pinrel, HIGH);
+    digitalWrite(pinrel, LOW);
     Serial.println("Temperatura alta, apagamos los radiadores.");
-    client.publish("losfontaneros/temperatura", str);
+    client.publish("CIFP/A27/temperaturaAula", str);
     digitalWrite(ledR, HIGH);
     digitalWrite(ledV, LOW);
     // Display static text
@@ -187,9 +188,9 @@ void loop() {
     display.startscrollright(2,5);
     pausa(2000);
   } else {
-    digitalWrite(pinrel, LOW);
+    digitalWrite(pinrel, HIGH);
     Serial.println("Temperatura baja, encendemos los radiadores.");
-    client.publish("losfontaneros/temperatura", str);
+    client.publish("CIFP/A27/temperaturaAula", str);
     digitalWrite(ledV, HIGH);
     digitalWrite(ledR, LOW);
     // Display static text
